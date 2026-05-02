@@ -1,0 +1,1 @@
+Socket programming is a fundamental skill for network engineers. It allows applications to communicate over a network, using protocols like TCP and UDP! TCP ensures reliable transmission, while UDP is faster but less reliable. Understanding the difference is key to building efficient systems.
