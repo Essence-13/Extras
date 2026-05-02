@@ -1,0 +1,40 @@
+[Unit]
+Description=ARP Spoof + DNS Poison Defender Daemon
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# ---- Edit these values for your network ----
+# iface         Your network interface (e.g. eth0, ens33)
+# gateway_ip    Your router's IP address
+# gateway_mac   Your router's MAC address (get via: arp -n <gateway_ip>)
+# trusted_dns   Comma-separated DNS server IPs you trust
+# watched       Comma-separated domains to alert on (optional)
+Environment="IFACE=eth0"
+Environment="GW_IP=192.168.1.1"
+Environment="GW_MAC=aa:bb:cc:dd:ee:ff"
+Environment="TRUSTED_DNS=8.8.8.8,8.8.4.4"
+Environment="WATCHED=example.com,mybank.com"
+
+ExecStart=/usr/local/sbin/defender \
+    ${IFACE} ${GW_IP} ${GW_MAC} ${TRUSTED_DNS} ${WATCHED}
+
+Restart=on-failure
+RestartSec=5s
+
+# Run as root so pcap raw sockets work
+User=root
+Group=root
+
+# Harden the service itself
+NoNewPrivileges=false
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/log/defender
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=defender
+
+[Install]
+WantedBy=multi-user.target
